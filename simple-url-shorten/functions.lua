@@ -22,7 +22,7 @@ function M.get_url_details(long_url)
 		return nil, 41
 	end
 	local result = {}
-	local matches = ngx.re.match(long_url, '^(http|https|ftp)://([^/]+)(/[^\\\\?#]+)([^#]+)?(.+)')
+	local matches = ngx.re.match(long_url, '^(http|https|ftp)://([^/]+)((/[^\\\\?#]+)([^#]+)?(.+))?')
 	if matches[2] then
 		result['protocol'] = matches[1]
 		result['host'] = matches[2]
