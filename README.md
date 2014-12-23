@@ -42,6 +42,52 @@ simple-url-shorten是一个基于openresty的Lua模块和Redis模块开发的简
 
 			...
 		}
+	5. 配置simple-url-shorten
+	
+		...
+	
+		-- 配置Redis数据库信息
+		local redis = {}
+		redis['host'] = '127.0.0.1'
+		redis['port'] = 6379
+		redis['password'] = 'passwd'
+	
+	
+		-- 设置起始的短网址，根据长度可以选择需要多少数量的短网址
+		-- 1  ->  62
+		-- 2  ->  3844
+		-- 3  ->  238328
+		-- 4  ->  14776336
+		-- 5  ->  916132832
+		-- 6  ->  56800235584
+		-- 7  ->  3521614606208
+		-- 8  ->  218340105584896
+		-- 9  ->  13537086546263552
+		-- 10 ->  839299365868340224
+		-- 11 ->  52036560683837093888
+		-- 12 ->  3226266762397899821056
+		-- 13 ->  200028539268669788905472
+		-- 14 ->  12401769434657526912139264
+		-- 15 ->  768909704948766668552634368
+		-- 16 ->  47672401706823533450263330816
+		local start_url = {'0','0','0','0'}
+		
+		-- 短网址前缀
+		local prefix = ''
+		
+		-- 短网址后缀
+		local suffix = ''
+	
+		-- 短网址的域名
+		local domain = 'http://192.168.56.201/'
+	
+		-- 接受网址缩短的白名单和黑名单，白名单优先级高于黑名单；
+		-- 黑名单中默认包含短网址的域名
+		local white_host = {}
+		local black_host = {domain}
+	
+		......
+
 
 	5. 启动nginx服务
 
@@ -58,7 +104,30 @@ simple-url-shorten是一个基于openresty的Lua模块和Redis模块开发的简
 	http://XXX.com/short?url=https%3A%2f%2fwww.google.com%2fsearch%3Fnewwindow%3D1%26biw%3D1600%26bih%3D753%26q%3Dsimple%2burl%2bshorten%26oq%3Dsimple%2burl%2bshorten%26gs_l%3Dserp.3..0i19l5j0i30i19j0i5i30i19l4.17382489.17389081.0.17389560.18.18.0.0.0.0.418.2756.0j5j3j2j1.11.0.msedr...0...1c.1.60.serp..7.11.2753.th4LFd5J5uU
 
 	Response:
-	{"status":1,"shorturl":"http://192.168.56.201/Rqo3F"}
+	{"status":1,"shorturl":"http://XXX.com/Rqo3F"}
+
+访问过程：
+	Request：
+	http://XXX.com/Rqo3F
+	
+	Response:
+
+	HTTP/1.1 302 Moved Temporarily
+	Server: openresty
+	Date: Tue, 23 Dec 2014 06:57:47 GMT
+	Content-Type: text/html
+	Content-Length: 154
+	Connection: keep-alive
+	Location: http://www.baidu.com/index.php?xxx=234
+	
+	<html>
+	<head><title>302 Found</title></head>
+	<body bgcolor="white">
+	<center><h1>302 Found</h1></center>
+	<hr><center>nginx</center>
+	</body>
+	</html>
+
 
 ## 注意事项 ##
 1. host白名单优先级高于黑名单，设置了白名单将只能对白名单的host网址进行网址缩短
